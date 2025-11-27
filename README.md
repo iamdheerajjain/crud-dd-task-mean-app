@@ -53,12 +53,14 @@ This application is containerized using Docker and can be deployed using Docker 
 ### Building and Running with Docker Compose
 
 1. Clone this repository:
+
    ```bash
    git clone <repository-url>
    cd crud-dd-task-mean-app
    ```
 
 2. Build and start all services:
+
    ```bash
    docker-compose up -d
    ```
@@ -66,6 +68,7 @@ This application is containerized using Docker and can be deployed using Docker 
 3. Access the application at `http://localhost`
 
 The Docker Compose setup includes:
+
 - MongoDB database
 - Node.js backend API
 - Angular frontend served by Nginx
@@ -85,6 +88,7 @@ This project uses GitHub Actions for continuous integration and deployment.
 
 1. Fork this repository to your GitHub account
 2. Set up the following secrets in your repository settings:
+
    - `DOCKERHUB_USERNAME`: Your Docker Hub username
    - `DOCKERHUB_TOKEN`: Your Docker Hub access token
    - `VM_HOST`: IP address of your deployment VM
@@ -94,6 +98,7 @@ This project uses GitHub Actions for continuous integration and deployment.
 3. Push changes to the `main` branch to trigger the workflow
 
 The pipeline will:
+
 - Build Docker images for frontend and backend
 - Push images to Docker Hub
 - Deploy to your VM using SSH
@@ -105,6 +110,7 @@ Nginx is used as a reverse proxy to serve the frontend and route API requests to
 Configuration file: `frontend/nginx.conf`
 
 Key features:
+
 - Serves Angular frontend on port 80
 - Proxies `/api/` requests to the backend service
 - Handles Angular routing correctly
