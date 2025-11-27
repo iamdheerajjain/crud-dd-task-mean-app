@@ -22,8 +22,8 @@ FROM nginx:alpine
 # Copy the built Angular application to Nginx's HTML directory
 COPY --from=builder /app/dist/angular-15-crud /usr/share/nginx/html
 
-# Copy custom Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Use default Nginx configuration for serving static files
+# Remove custom Nginx configuration since we're using a separate reverse proxy
 
 # Expose port 80
 EXPOSE 80
