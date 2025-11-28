@@ -54,12 +54,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Prepare SSH key
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf "%s" "${{ secrets.VM_SSH_KEY }}" | perl -0pe 's/\\n/\n/g' > ~/.ssh/vm_deploy_key
+          chmod 600 ~/.ssh/vm_deploy_key
+
       - name: Upload docker-compose bundle
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USERNAME }}
-          key: ${{ secrets.VM_SSH_KEY }}
+          key_path: ~/.ssh/vm_deploy_key
           source: "docker-compose.deploy.yml,nginx.conf"
           target: "/home/${{ secrets.VM_USERNAME }}/mean-app"
 
@@ -68,7 +75,7 @@ jobs:
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USERNAME }}
-          key: ${{ secrets.VM_SSH_KEY }}
+          key_path: ~/.ssh/vm_deploy_key
           script: |
             set -euo pipefail
             DEPLOY_DIR=/home/${{ secrets.VM_USERNAME }}/mean-app

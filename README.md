@@ -119,4 +119,5 @@ docker-compose down
 - `POST /api/tutorials` - Create a new tutorial
 - `PUT /api/tutorials/:id` - Update a tutorial
 - `DELETE /api/tutorials/:id` - Delete a tutorial
-- `
+- `DELETE /api/tutorials` - Delete all tutorials
+- `GET /api/tutorials?title=[title]` - Find tutorials by title
