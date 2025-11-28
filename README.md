@@ -108,4 +108,3 @@ docker-compose down
 
 ## Jenkins CI/CD
 
-This project includes a Jenkinsfile for implementing CI/CD with Jenkins. See the Jenkinsfile for details on the pipeline stages.
