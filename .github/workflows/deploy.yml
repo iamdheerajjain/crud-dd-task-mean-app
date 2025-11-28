@@ -51,6 +51,18 @@ jobs:
     needs: [build-and-push-backend, build-and-push-frontend]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Upload docker-compose bundle
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: "docker-compose.deploy.yml,nginx.conf"
+          target: "/home/${{ secrets.VM_USERNAME }}/mean-app"
+
       - name: Deploy to VM
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -58,10 +70,12 @@ jobs:
           username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            echo "Pulling latest images..."
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mean-backend:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mean-frontend:latest
-            echo "Stopping existing containers..."
-            docker-compose down
-            echo "Starting new containers..."
-            docker-compose up -d
+            set -euo pipefail
+            DEPLOY_DIR=/home/${{ secrets.VM_USERNAME }}/mean-app
+            mkdir -p "$DEPLOY_DIR"
+            cd "$DEPLOY_DIR"
+            export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            echo "Pulling latest images via docker-compose..."
+            docker-compose -f docker-compose.deploy.yml pull
+            echo "Recreating containers..."
+            docker-compose -f docker-compose.deploy.yml up -d --force-recreate --remove-orphans

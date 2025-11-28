@@ -51,12 +51,28 @@ The application uses Docker Compose with the following services:
 The application is deployed using GitHub Actions:
 
 1. On push to main/master branch, Docker images are built and pushed to Docker Hub
-2. SSH connection is established with the deployment VM
-3. Latest Docker images are pulled and containers are restarted
+2. The deployment bundle (`docker-compose.deploy.yml` + `nginx.conf`) is copied to the VM
+3. Docker Compose is executed remotely to pull the latest images and restart the stack
 
 ### 5. Accessing the Application
 
 After deployment, the application will be accessible at `http://your-vm-ip`
+
+### 6. Preparing a New VM
+
+1. Install Docker Engine and Docker Compose Plugin (or standalone `docker-compose`).
+2. Create a working directory on the VM, e.g. `/home/ubuntu/mean-app`.
+3. Make sure the VM user is in the `docker` group or run commands with `sudo`.
+4. Configure the GitHub Secrets `VM_HOST`, `VM_USERNAME`, `VM_SSH_KEY`, `DOCKERHUB_USERNAME`, and `DOCKERHUB_TOKEN`.
+5. The GitHub Action will copy `docker-compose.deploy.yml` and `nginx.conf` into the directory and run:
+
+```bash
+export DOCKERHUB_USERNAME=<your-dockerhub-username>
+docker-compose -f docker-compose.deploy.yml pull
+docker-compose -f docker-compose.deploy.yml up -d --force-recreate --remove-orphans
+```
+
+You can run the same commands manually on the VM whenever you need to redeploy. The compose file pulls the published backend (`mean-backend:latest`) and frontend (`mean-frontend:latest`) images and wires them together with MongoDB and Nginx.
 
 ## Project Structure
 
@@ -103,5 +119,4 @@ docker-compose down
 - `POST /api/tutorials` - Create a new tutorial
 - `PUT /api/tutorials/:id` - Update a tutorial
 - `DELETE /api/tutorials/:id` - Delete a tutorial
-- `DELETE /api/tutorials` - Delete all tutorials
-- `GET /api/tutorials?title=[title]` - Find tutorials by title
+- `
