@@ -105,6 +105,3 @@ docker-compose down
 - `DELETE /api/tutorials/:id` - Delete a tutorial
 - `DELETE /api/tutorials` - Delete all tutorials
 - `GET /api/tutorials?title=[title]` - Find tutorials by title
-
-## Jenkins CI/CD
-
